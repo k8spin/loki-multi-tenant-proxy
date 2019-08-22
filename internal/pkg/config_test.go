@@ -85,3 +85,55 @@ func TestParseConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestGetOrgID(t *testing.T) {
+	sampleAuth := Authn{
+		[]User{
+			User{
+				"Grafana",
+				"Loki",
+				"tenant-1",
+			},
+		},
+	}
+	type args struct {
+		userName string
+		users    *Authn
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			"Correct user",
+			args{
+				"Grafana",
+				&sampleAuth,
+			},
+			"tenant-1",
+			false,
+		}, {
+			"Missing user",
+			args{
+				"ELK",
+				&sampleAuth,
+			},
+			"",
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetOrgID(tt.args.userName, tt.args.users)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetOrgID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetOrgID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
