@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"errors"
 	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
@@ -31,14 +30,4 @@ func ParseConfig(location *string) (*Authn, error) {
 		return nil, err
 	}
 	return &authn, nil
-}
-
-// GetOrgID Returns the org id from a given username
-func GetOrgID(userName string, users *Authn) (string, error) {
-	for _, v := range users.Users {
-		if v.Username == userName {
-			return v.OrgID, nil
-		}
-	}
-	return "", errors.New("User not found")
 }

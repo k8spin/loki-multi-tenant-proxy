@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/angelbarrera92/loki-multi-tenant-proxy/internal/app/loki-multi-tenant-proxy"
 	"github.com/urfave/cli"
 )
 
@@ -22,7 +23,7 @@ func main() {
 		{
 			Name:   "run",
 			Usage:  "Runs the Loki multi tenant proxy",
-			Action: nil,
+			Action: proxy.Serve,
 			Flags: []cli.Flag{
 				cli.IntFlag{
 					Name:  "port",

@@ -1,33 +1,42 @@
 package proxy
 
 import (
+	"context"
 	"crypto/subtle"
 	"net/http"
 
 	"github.com/angelbarrera92/loki-multi-tenant-proxy/internal/pkg"
 )
 
-const realm = "Loki multi-tenant proxy"
+type key int
+
+const (
+	// OrgIDKey Key used to pass loki tenant id though the middleware context
+	OrgIDKey key = iota
+	realm        = "Loki multi-tenant proxy"
+)
 
 // BasicAuth can be used as a middleware chain to authenticate users before proxying a request
-func BasicAuth(handler http.HandlerFunc, users *pkg.Authn) http.HandlerFunc {
+func BasicAuth(handler http.HandlerFunc, authConfig *pkg.Authn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, pass, ok := r.BasicAuth()
-		if !ok || !isAuthorized(user, pass, users) {
+		authorized, orgID := isAuthorized(user, pass, authConfig)
+		if !ok || !authorized {
 			writeUnauthorisedResponse(w)
 			return
 		}
-		handler(w, r)
+		ctx := context.WithValue(r.Context(), OrgIDKey, orgID)
+		handler(w, r.WithContext(ctx))
 	}
 }
 
-func isAuthorized(user string, pass string, users *pkg.Authn) bool {
-	for _, v := range users.Users {
+func isAuthorized(user string, pass string, authConfig *pkg.Authn) (bool, string) {
+	for _, v := range authConfig.Users {
 		if subtle.ConstantTimeCompare([]byte(user), []byte(v.Username)) == 1 && subtle.ConstantTimeCompare([]byte(pass), []byte(v.Password)) == 1 {
-			return true
+			return true, v.OrgID
 		}
 	}
-	return false
+	return false, ""
 }
 
 func writeUnauthorisedResponse(w http.ResponseWriter) {
