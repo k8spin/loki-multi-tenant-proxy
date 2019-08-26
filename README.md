@@ -97,3 +97,47 @@ client:
   url: http://loki-server:3500/api/prom/push
 ```
 
+## Build it
+
+If you want to build it from this repository, follow the instructions bellow:
+
+```bash
+$ docker run -it --entrypoint /bin/bash --rm golang:latest
+root@6985c5523ed0:/go# git clone https://github.com/angelbarrera92/loki-multi-tenant-proxy.git
+Cloning into 'loki-multi-tenant-proxy'...
+remote: Enumerating objects: 88, done.
+remote: Counting objects: 100% (88/88), done.
+remote: Compressing objects: 100% (64/64), done.
+remote: Total 88 (delta 26), reused 78 (delta 20), pack-reused 0
+Unpacking objects: 100% (88/88), done
+root@6985c5523ed0:/go# cd loki-multi-tenant-proxy/cmd/loki-multi-tenant-proxy/
+root@6985c5523ed0:/go# go build
+go: finding github.com/urfave/cli v1.21.0
+go: finding gopkg.in/yaml.v2 v2.2.2
+go: finding github.com/BurntSushi/toml v0.3.1
+go: finding gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405
+go: downloading github.com/urfave/cli v1.21.0
+go: downloading gopkg.in/yaml.v2 v2.2.2
+go: extracting github.com/urfave/cli v1.21.0
+go: extracting gopkg.in/yaml.v2 v2.2.2
+root@6985c5523ed0:/go# ./loki-multi-tenant-proxy
+NAME:
+   Loki Multitenant Proxy - Makes your Loki server multi tenant
+
+USAGE:
+   loki-multi-tenant-proxy [global options] command [command options] [arguments...]
+
+VERSION:
+   dev
+
+AUTHOR:
+   Ángel Barrera - @angelbarrera92
+
+COMMANDS:
+   run      Runs the Loki multi tenant proxy
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help
+   --version, -v  print the version
+```
