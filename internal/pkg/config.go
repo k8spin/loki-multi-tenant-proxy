@@ -11,7 +11,7 @@ type Authn struct {
 	Users []User `yaml:"users"`
 }
 
-// User Identifies an username
+// User Identifies a user including the tenant
 type User struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
