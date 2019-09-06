@@ -141,3 +141,17 @@ GLOBAL OPTIONS:
    --help, -h     show help
    --version, -v  print the version
 ```
+
+### Build the container image
+
+If you want to build a container image with this proxy, simply run:
+
+```bash
+$ docker build -t loki-multi-tenant-proxy:local -f build/package/Dockerfile .
+```
+
+After built, just run it:
+
+```bash
+$ docker run --rm loki-multi-tenant-proxy:local
+```
