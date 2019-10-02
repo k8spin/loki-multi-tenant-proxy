@@ -4,9 +4,9 @@ ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 
 RUN apk add  -U --no-cache git ca-certificates && \
-    mkdir -p src/github.com/angelbarrera92/loki-multi-tenant-proxy
+    mkdir -p src/github.com/k8spin/loki-multi-tenant-proxy
 
-WORKDIR /go/src/github.com/angelbarrera92/loki-multi-tenant-proxy
+WORKDIR /go/src/github.com/k8spin/loki-multi-tenant-proxy
 
 COPY go.mod go.mod
 COPY go.sum go.sum
@@ -19,6 +19,6 @@ RUN cd cmd/loki-multi-tenant-proxy && \
 FROM scratch
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/src/github.com/angelbarrera92/loki-multi-tenant-proxy/cmd/loki-multi-tenant-proxy/loki-multi-tenant-proxy /loki-multi-tenant-proxy
+COPY --from=builder /go/src/github.com/k8spin/loki-multi-tenant-proxy/cmd/loki-multi-tenant-proxy/loki-multi-tenant-proxy /loki-multi-tenant-proxy
 
 ENTRYPOINT [ "/loki-multi-tenant-proxy" ]
