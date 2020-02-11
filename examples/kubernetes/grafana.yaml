@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grafana
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: grafana
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    run: grafana
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: grafana
+  name: grafana
+  namespace: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: grafana
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: grafana
+    spec:
+      containers:
+      - args:
+        - 3000:3000
+        image: grafana/grafana:6.6.1
+        name: grafana
+        ports:
+        - containerPort: 3000
+        resources: {}

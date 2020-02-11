@@ -1,0 +1,140 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: log-recolector
+  namespace: tenant-2
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: log-recolector
+  namespace: tenant-2
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: log-recolector
+  namespace: tenant-2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-recolector
+  namespace: tenant-2
+spec:
+  selector:
+    matchLabels:
+      app: log-recolector
+      kail.ignore: "true"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: log-recolector
+        kail.ignore: "true"
+    spec:
+      serviceAccount: log-recolector
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      - name: promtail-config
+        secret:
+          secretName: tenant-2-log-recolector-config
+      containers:
+      - name: kail
+        image: angelbarrera92/kail:0.12
+        args:
+          - "/bin/sh"
+          - "-c"
+          - "kail --log-file /loki/logs/kail --log-level debug --ns tenant-2 >> /loki/logs/containers"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /loki/logs
+      - name: promtail
+        args:
+          - -config.file=/etc/promtail/promtail.yaml
+        image: grafana/promtail:v1.3.0
+        volumeMounts:
+        - name: shared-data
+          mountPath: /loki/logs
+        - name: promtail-config
+          mountPath: /etc/promtail
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tenant-2-log-recolector-config
+  namespace: tenant-2
+stringData:
+  promtail.yaml:  |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+    client:
+      url: http://loki-multi-tenant-proxy.grafana.svc.cluster.local:3100/api/prom/push
+      basic_auth:
+        username: Tenant2
+        password: 2tnaneT
+    scrape_configs:
+      - job_name: containers
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: containers
+              __path__: /loki/logs/containers
+        pipeline_stages:
+        - regex:
+            expression: '^(?P<namespace>.*)\/(?P<pod>.*)\[(?P<container>.*)\]: (?P<content>.*)'
+        - labels:
+            namespace:
+            pod:
+            container:
+        - output:
+            source: content
+      - job_name: kail
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: kail
+              __path__: /loki/logs/kail
+        pipeline_stages:
+        - regex:
+            expression: '^time="(?P<time>.*)" level=(?P<level>.*) msg="(?P<content>.*)" cmp=(?P<component>.*)'
+        - labels:
+            time:
+            level:
+            component:
+        - timestamp:
+            source: time
+            format: RFC3339
+        - output:
+            source: content
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter
+  namespace: tenant-2
+spec:
+  containers:
+  - name: count
+    image: busybox
+    args: [/bin/sh, -c,
+            'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done']
+    resources:
+      requests:
+        memory: "10Mi"
+        cpu: "5m"
+      limits:
+        memory: "10Mi"
+        cpu: "5m"
