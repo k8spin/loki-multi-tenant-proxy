@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/angelbarrera92/loki-multi-tenant-proxy/internal/app/loki-multi-tenant-proxy"
+	proxy "github.com/angelbarrera92/loki-multi-tenant-proxy/internal/app/loki-multi-tenant-proxy"
 	"github.com/urfave/cli"
 )
 
@@ -18,7 +18,10 @@ func main() {
 	app.Name = "Loki Multitenant Proxy"
 	app.Usage = "Makes your Loki server multi tenant"
 	app.Version = version
-	app.Author = "Ángel Barrera - @angelbarrera92"
+	app.Authors = []cli.Author{
+		{Name: "Angel Barrera", Email: "angel@k8spin.cloud"},
+		{Name: "Pau Rosello", Email: "pau@k8spin.cloud"},
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:   "run",
