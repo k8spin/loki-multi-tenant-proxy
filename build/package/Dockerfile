@@ -1,5 +1,8 @@
 FROM golang:1.12-alpine as builder
 
+ARG VERSION=dev
+ARG COMMIT=none
+
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 
@@ -14,7 +17,7 @@ COPY cmd cmd
 COPY internal internal
 
 RUN cd cmd/loki-multi-tenant-proxy && \
-    go build .
+    go build -ldflags="-X 'main.version=${VERSION}' -X 'main.commit=${COMMIT}'"
 
 FROM scratch
 
