@@ -1,6 +1,6 @@
 module github.com/angelbarrera92/loki-multi-tenant-proxy
 
-go 1.12
+go 1.19
 
 require (
 	github.com/urfave/cli v1.21.0
