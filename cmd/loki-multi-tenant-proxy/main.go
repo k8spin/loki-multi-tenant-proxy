@@ -40,6 +40,9 @@ func main() {
 					Name:  "auth-config",
 					Usage: "AuthN yaml configuration file path",
 					Value: "authn.yaml",
+				}, cli.BoolFlag{
+					Name:  "keep-orgid",
+					Usage: "Don't change OrgID header (proxy is only used for authent)",
 				},
 			},
 		},
