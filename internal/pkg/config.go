@@ -9,7 +9,7 @@ import (
 // Authn Contains a list of users
 type Authn struct {
 	Users     []User `yaml:"users"`
-    KeepOrgID bool
+	KeepOrgID bool
 }
 
 // User Identifies a user including the tenant
