@@ -17,6 +17,7 @@ func Serve(c *cli.Context) error {
 	serveAt := fmt.Sprintf(":%d", c.Int("port"))
 	authConfigLocation := c.String("auth-config")
 	authConfig, _ := pkg.ParseConfig(&authConfigLocation)
+	authConfig.KeepOrgID = c.Bool("keep-orgid")
 
 	http.HandleFunc("/", createHandler(lokiServerURL, authConfig))
 	if err := http.ListenAndServe(serveAt, nil); err != nil {

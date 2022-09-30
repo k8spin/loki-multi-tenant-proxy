@@ -32,6 +32,7 @@ Where:
 - `--port`: Port used to expose this proxy.
 - `--loki-server`: URL of your grafana loki instance.
 - `--auth-config`: Authentication configuration file path.
+- `--keep-orgid`: Don't change OrgID header.
 
 #### Configure the proxy
 
