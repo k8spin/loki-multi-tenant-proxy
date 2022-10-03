@@ -20,7 +20,7 @@ workflows:
       - architect/push-to-docker:
           context: "architect"
           name: push-to-docker.io
-          image: "docker.io/giantswarm/loki-multi-tenant-proxy"
+          image: "docker.io/giantswarm/loki-multi-tenant-proxy-gs"
           username_envar: "DOCKER_USERNAME"
           password_envar: "DOCKER_PASSWORD"
           dockerfile: "build/package/Dockerfile-with-tests"
@@ -34,7 +34,7 @@ workflows:
       - architect/push-to-docker:
           context: "architect"
           name: push-to-quay.io
-          image: "quay.io/giantswarm/loki-multi-tenant-proxy"
+          image: "quay.io/giantswarm/loki-multi-tenant-proxy-gs"
           username_envar: "QUAY_USERNAME"
           password_envar: "QUAY_PASSWORD"
           dockerfile: "build/package/Dockerfile-with-tests"
@@ -48,7 +48,7 @@ workflows:
       - architect/push-to-docker:
           context: "architect"
           name: push-to-aliyun
-          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/loki-multi-tenant-proxy"
+          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/loki-multi-tenant-proxy-gs"
           username_envar: "ALIYUN_USERNAME"
           password_envar: "ALIYUN_PASSWORD"
           dockerfile: "build/package/Dockerfile-with-tests"
