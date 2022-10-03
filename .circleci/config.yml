@@ -1,0 +1,60 @@
+---
+version: 2.1
+
+orbs:
+  architect: giantswarm/architect@4.24.0
+
+workflows:
+  build:
+    jobs:
+      # Build is done in Dockerfile-with-tests
+      # We should do go test, but currently fails
+      # So we run tests in Dockerfile for the moment
+      # - architect/go-build:
+      #     name: go-build
+      #     binary: loki-multi-tenant-proxy
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+
+      - architect/push-to-docker:
+          context: "architect"
+          name: push-to-docker.io
+          image: "docker.io/giantswarm/loki-multi-tenant-proxy"
+          username_envar: "DOCKER_USERNAME"
+          password_envar: "DOCKER_PASSWORD"
+          dockerfile: "build/package/Dockerfile-with-tests"
+          # requires:
+          #   - go-build
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-docker:
+          context: "architect"
+          name: push-to-quay.io
+          image: "quay.io/giantswarm/loki-multi-tenant-proxy"
+          username_envar: "QUAY_USERNAME"
+          password_envar: "QUAY_PASSWORD"
+          dockerfile: "build/package/Dockerfile-with-tests"
+          # requires:
+          #   - go-build
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/
+
+      - architect/push-to-docker:
+          context: "architect"
+          name: push-to-aliyun
+          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/loki-multi-tenant-proxy"
+          username_envar: "ALIYUN_USERNAME"
+          password_envar: "ALIYUN_PASSWORD"
+          dockerfile: "build/package/Dockerfile-with-tests"
+          # requires:
+          #   - go-build
+          # Needed to trigger job also on git tag.
+          filters:
+            tags:
+              only: /^v.*/

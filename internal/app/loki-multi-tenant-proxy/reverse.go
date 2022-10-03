@@ -20,7 +20,7 @@ func modifyRequest(r *http.Request, lokiServerURL *url.URL) {
 	r.Host = lokiServerURL.Host
 	orgID := r.Context().Value(OrgIDKey)
 	r.Header.Set("X-Forwarded-Host", r.Host)
-    if orgID != "" {
-	    r.Header.Set("X-Scope-OrgID", orgID.(string))
-    }
+	if orgID != "" {
+		r.Header.Set("X-Scope-OrgID", orgID.(string))
+	}
 }

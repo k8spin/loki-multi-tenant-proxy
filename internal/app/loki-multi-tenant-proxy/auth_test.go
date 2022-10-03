@@ -8,18 +8,19 @@ import (
 
 func Test_isAuthorized(t *testing.T) {
 	authConfig := pkg.Authn{
-		[]pkg.User{
+		Users: []pkg.User{
 			pkg.User{
-				"User-a",
-				"pass-a",
-				"tenant-a",
+				Username: "User-a",
+				Password: "pass-a",
+				OrgID:    "tenant-a",
 			},
 			pkg.User{
-				"User-b",
-				"pass-b",
-				"tenant-b",
+				Username: "User-b",
+				Password: "pass-b",
+				OrgID:    "tenant-b",
 			},
 		},
+		KeepOrgID: false,
 	}
 	type args struct {
 		user       string

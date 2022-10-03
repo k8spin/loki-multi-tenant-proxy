@@ -18,6 +18,7 @@ func TestParseConfig(t *testing.T) {
 				"tenant-1",
 			},
 		},
+		false,
 	}
 	expectedMultipleUserAuth := Authn{
 		[]User{
@@ -32,6 +33,7 @@ func TestParseConfig(t *testing.T) {
 				"tenant-b",
 			},
 		},
+		false,
 	}
 	type args struct {
 		location *string
