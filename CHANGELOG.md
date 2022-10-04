@@ -11,4 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - changed: image renamed to loki-multi-tenant-proxy-gs
 - changed: Setup CI
 
-[Unreleased]: https://github.com/giantswarm/{APP-NAME}/tree/main
+[Unreleased]: https://github.com/giantswarm/loki-multi-tenant-proxy/tree/main
