@@ -7,7 +7,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/angelbarrera92/loki-multi-tenant-proxy/internal/pkg"
+	"github.com/giantswarm/loki-multi-tenant-proxy/internal/pkg"
 	"github.com/urfave/cli"
 )
 

@@ -5,7 +5,7 @@ import (
 	"crypto/subtle"
 	"net/http"
 
-	"github.com/angelbarrera92/loki-multi-tenant-proxy/internal/pkg"
+	"github.com/giantswarm/loki-multi-tenant-proxy/internal/pkg"
 )
 
 type key int
