@@ -1,6 +1,6 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@5.18.0
+#    devctl@5.18.1
 #
 name: Create Release
 on:
@@ -251,3 +251,56 @@ jobs:
 
           git branch $release_branch HEAD^
           git push origin $release_branch
+
+  create_and_upload_build_artifacts:
+    name: Create and upload build artifacts
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - darwin-amd64
+          - linux-amd64
+          - darwin-arm64
+          - linux-arm64
+          - windows-amd64
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GO_VERSION: 1.19.1
+      ARTIFACT_DIR: bin-dist
+      TAG: v${{ needs.gather_facts.outputs.version }}
+      CODE_SIGNING_CERT_BUNDLE_BASE64: ${{ secrets.CODE_SIGNING_CERT_BUNDLE_BASE64 }}
+      CODE_SIGNING_CERT_BUNDLE_PASSWORD: ${{ secrets.CODE_SIGNING_CERT_BUNDLE_PASSWORD }}
+    needs:
+      - create_release
+      - gather_facts
+    steps:
+      - name: Install architect
+        uses: giantswarm/install-binary-action@v1.1.0
+        with:
+          binary: "architect"
+          version: "6.7.0"
+      - name: Set up Go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v3.3.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.TAG }}
+      - name: Create ${{ matrix.platform }} package
+        run: make package-${{ matrix.platform }}
+      - name: Specify package file name based on platform
+        run: |
+          if [[ "${{ matrix.platform }}" == "windows-amd64" ]]; then
+            echo "FILE_NAME=${{ github.event.repository.name }}-${{ env.TAG }}-${{ matrix.platform }}.zip" >> $GITHUB_ENV
+          else
+            echo "FILE_NAME=${{ github.event.repository.name }}-${{ env.TAG }}-${{ matrix.platform }}.tar.gz" >> $GITHUB_ENV
+          fi
+      - name: Add ${{ matrix.platform }} package to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ${{ env.ARTIFACT_DIR }}/${{ env.FILE_NAME }}
+          asset_name: ${{ env.FILE_NAME }}
+          asset_content_type: application/octet-stream
