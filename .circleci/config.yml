@@ -48,7 +48,7 @@ workflows:
       - architect/push-to-docker:
           context: "architect"
           name: push-to-aliyun
-          image: "registry-intl.cn-shanghai.aliyuncs.com/giantswarm/loki-multi-tenant-proxy-gs"
+          image: "giantswarm-registry.cn-shanghai.cr.aliyuncs.com/giantswarm/loki-multi-tenant-proxy-gs"
           username_envar: "ALIYUN_USERNAME"
           password_envar: "ALIYUN_PASSWORD"
           dockerfile: "build/package/Dockerfile-with-tests"
