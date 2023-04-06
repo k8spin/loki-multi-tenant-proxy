@@ -8,7 +8,7 @@ import (
 	"net/url"
 
 	"github.com/giantswarm/loki-multi-tenant-proxy/internal/pkg"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 // Serve serves
