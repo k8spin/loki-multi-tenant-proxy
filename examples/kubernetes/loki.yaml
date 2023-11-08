@@ -109,7 +109,7 @@ spec:
         runAsUser: 10001
       containers:
         - name: loki
-          image: "grafana/loki:1.6.1"
+          image: "grafana/loki:2.9.2"
           imagePullPolicy: Always
           args:
             - "-config.file=/etc/loki/loki.yaml"
