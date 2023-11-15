@@ -40,7 +40,7 @@ spec:
       containers:
       - args:
         - 3000:3000
-        image: grafana/grafana:10.2.0
+        image: grafana/grafana:10.2.1
         name: grafana
         ports:
         - containerPort: 3000
