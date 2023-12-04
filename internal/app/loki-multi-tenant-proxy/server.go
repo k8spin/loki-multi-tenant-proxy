@@ -20,7 +20,19 @@ func Serve(c *cli.Context) error {
 	authConfig, _ := pkg.ParseConfig(&authConfigLocation)
 	authConfig.KeepOrgID = c.Bool("keep-orgid")
 
-	logger := zap.Must(zap.NewProduction())
+	logLevel := c.String("log-level")
+	if logLevel == "" {
+		logLevel = "INFO"
+	}
+
+	zapConfig := zap.NewProductionConfig()
+	level, err := zap.ParseAtomicLevel(logLevel)
+	if err != nil {
+		panic(fmt.Sprintf("Could not parse log level %v", zap.Error(err)))
+	}
+	zapConfig.Level = level
+
+	logger := zap.Must(zapConfig.Build())
 	defer logger.Sync()
 
 	errorLogger, err := zap.NewStdLogAt(logger, zap.ErrorLevel)
