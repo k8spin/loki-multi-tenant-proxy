@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -25,22 +24,50 @@ func Serve(c *cli.Context) error {
 		logLevel = "INFO"
 	}
 
-	zapConfig := zap.NewProductionConfig()
-	level, err := zap.ParseAtomicLevel(logLevel)
-	if err != nil {
-		panic(fmt.Sprintf("Could not parse log level %v", zap.Error(err)))
-	}
-	zapConfig.Level = level
+	var logger *zap.Logger
+	{
+		zapConfig := zap.NewProductionConfig()
+		level, err := zap.ParseAtomicLevel(logLevel)
+		if err != nil {
+			panic(fmt.Sprintf("Could not parse log level %v", zap.Error(err)))
+		}
+		zapConfig.Level = level
 
-	logger := zap.Must(zapConfig.Build())
-	defer logger.Sync()
+		logger = zap.Must(zapConfig.Build())
+		defer logger.Sync()
+	}
 
 	errorLogger, err := zap.NewStdLogAt(logger, zap.ErrorLevel)
 	if err != nil {
 		logger.Fatal("Can not create error logger", zap.Error(err))
 	}
 
-	http.HandleFunc("/", createHandler(lokiServerURL, authConfig, logger, errorLogger))
+	var reverseProxy *httputil.ReverseProxy
+	{
+		reverseProxy = &httputil.ReverseProxy{
+			Rewrite: func(r *httputil.ProxyRequest) {
+				r.SetURL(lokiServerURL)
+				r.Out.Host = lokiServerURL.Host
+				r.Out.Header.Set("X-Forwarded-Host", lokiServerURL.Host)
+				orgID := r.In.Context().Value(OrgIDKey)
+
+				if orgID != "" {
+					r.Out.Header.Set("X-Scope-OrgID", orgID.(string))
+				}
+			},
+			ErrorLog: errorLogger,
+		}
+	}
+
+	handlers := Logger(
+		BasicAuth(
+			ReverseLoki(reverseProxy),
+			authConfig,
+		),
+		logger,
+	)
+
+	http.HandleFunc("/", handlers)
 	server := &http.Server{Addr: addr, ErrorLog: errorLogger}
 	if err := server.ListenAndServe(); err != nil {
 		logger.Fatal("Loki multi tenant proxy can not start", zap.Error(err))
@@ -48,10 +75,4 @@ func Serve(c *cli.Context) error {
 	}
 	logger.Info("Starting HTTP server", zap.String("addr", addr))
 	return nil
-}
-
-func createHandler(lokiServerURL *url.URL, authConfig *pkg.Authn, logger *zap.Logger, errorLogger *log.Logger) http.HandlerFunc {
-	reverseProxy := httputil.NewSingleHostReverseProxy(lokiServerURL)
-	reverseProxy.ErrorLog = errorLogger
-	return Logger(BasicAuth(ReverseLoki(reverseProxy, lokiServerURL), authConfig), logger)
 }
