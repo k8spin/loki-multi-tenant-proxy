@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-12-11
+
 ### Changed:
 
-- Bump github.com/urfave/cli from 1.22.10 to 1.22.11
+- Bump github.com/urfave/cli from 1.22.10 to v2.26.0
 - Use zap as logger and log status code.
 
 ## [0.1.0] - 2022-10-11
@@ -22,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump github.com/urfave/cli from 1.21.0 to 1.22.10
 - Bump gopkg.in/yaml.v2 from 2.2.2 to 2.4.0
 
-[Unreleased]: https://github.com/giantswarm/loki-multi-tenant-proxy/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/loki-multi-tenant-proxy/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/giantswarm/loki-multi-tenant-proxy/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/giantswarm/loki-multi-tenant-proxy/compare/v0.0.0...v0.1.0
 [0.0.0]: https://github.com/giantswarm/loki-multi-tenant-proxy/releases/tag/v0.0.0
