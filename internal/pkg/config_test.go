@@ -12,7 +12,7 @@ func TestParseConfig(t *testing.T) {
 	configMultipleUserLocation := "../../configs/multiple.user.yaml"
 	expectedSampleAuth := Authn{
 		[]User{
-			User{
+			{
 				"Grafana",
 				"Loki",
 				"tenant-1",
@@ -22,12 +22,12 @@ func TestParseConfig(t *testing.T) {
 	}
 	expectedMultipleUserAuth := Authn{
 		[]User{
-			User{
+			{
 				"User-a",
 				"pass-a",
 				"tenant-a",
 			},
-			User{
+			{
 				"User-b",
 				"pass-b",
 				"tenant-b",

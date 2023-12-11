@@ -9,8 +9,6 @@ import (
 
 var (
 	version = "dev"
-	commit  = "none"
-	date    = "unknown"
 )
 
 func main() {
@@ -40,6 +38,10 @@ func main() {
 					Name:  "auth-config",
 					Usage: "AuthN yaml configuration file path",
 					Value: "authn.yaml",
+				}, &cli.StringFlag{
+					Name:  "log-level",
+					Usage: "Log level (DEBUG, INFO, WARN, ERROR, PANIC, FATAL)",
+					Value: "INFO",
 				}, &cli.BoolFlag{
 					Name:  "keep-orgid",
 					Usage: "Don't change OrgID header (proxy is only used for authent)",
@@ -47,5 +49,6 @@ func main() {
 			},
 		},
 	}
+
 	app.Run(os.Args)
 }
