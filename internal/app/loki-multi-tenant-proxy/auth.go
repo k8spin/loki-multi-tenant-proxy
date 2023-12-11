@@ -20,8 +20,13 @@ const (
 func BasicAuth(handler http.HandlerFunc, authConfig *pkg.Authn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, pass, ok := r.BasicAuth()
+		if !ok {
+			writeUnauthorisedResponse(w)
+			return
+		}
+		
 		authorized, orgID := isAuthorized(user, pass, authConfig)
-		if !ok || !authorized {
+		if !authorized {
 			writeUnauthorisedResponse(w)
 			return
 		}

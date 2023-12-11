@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 
 	"github.com/giantswarm/loki-multi-tenant-proxy/internal/pkg"
 	"github.com/urfave/cli/v2"
@@ -52,7 +53,13 @@ func Serve(c *cli.Context) error {
 				orgID := r.In.Context().Value(OrgIDKey)
 
 				if orgID != "" {
-					r.Out.Header.Set("X-Scope-OrgID", orgID.(string))
+					tenantIDsInUrl := extractTenantIDsInURL(r.In.URL)
+					if len(tenantIDsInUrl) > 0 {
+						logger.Info("Tenant ID found in URL", zap.String("tenant_ids", strings.Join(tenantIDsInUrl, ",")))
+						r.Out.Header.Set("X-Scope-OrgID", tenantIDsInUrl[0])
+					} else {
+						r.Out.Header.Set("X-Scope-OrgID", orgID.(string))
+					}
 				}
 			},
 			ErrorLog: errorLogger,
@@ -74,4 +81,15 @@ func Serve(c *cli.Context) error {
 	}
 	logger.Info("Starting HTTP server", zap.String("addr", addr))
 	return nil
+}
+
+func extractTenantIDsInURL(url *url.URL) []string {
+	tenantIDs := []string{}
+	if url.Path == "loki/api/v1/query_range" || url.Path == "loki/api/v1/index/stats" {
+		query := url.Query().Get("query")
+		if strings.Contains(query, "gaia") {
+			tenantIDs = append(tenantIDs, "gaia")
+		}
+	}
+	return tenantIDs
 }
