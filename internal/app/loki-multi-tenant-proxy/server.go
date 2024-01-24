@@ -60,9 +60,10 @@ func Serve(c *cli.Context) error {
 	}
 
 	handlers := Logger(
-		BasicAuth(
+		Authentication(
 			ReverseLoki(reverseProxy),
 			authConfig,
+			logger,
 		),
 		logger,
 	)
