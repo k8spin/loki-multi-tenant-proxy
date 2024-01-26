@@ -55,7 +55,7 @@ func Test_isAuthorized(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := isAuthorized(tt.args.user, tt.args.pass, tt.args.authConfig)
+			got, got1 := isAuthorized(tt.args.user, tt.args.pass, tt.args.authConfig, "basic")
 			if got != tt.want {
 				t.Errorf("isAuthorized() got = %v, want %v", got, tt.want)
 			}
